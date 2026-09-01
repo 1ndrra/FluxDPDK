@@ -70,33 +70,33 @@ Processing millions of fragmented packets across standard 4KB memory pages cause
 
 ## System Architecture
 ```
-                                     [ External Network ]
-                                               |
-          +-------------------------------------------------------------------------+
-          |                          Physical NIC Silicon                           |
-          |  +-------------------------------------------------------------------+  |
-          |  |                Hardware Flow Steering (rte_flow)                  |  |
-          |  +-------------------------------------------------------------------+  |
-          +---------|-----------------------------------------------------|---------+
-                    | (TCP Dst Port 80)                                   | (UDP)
-                    v                                                     v
-          +-----------------------+                             +-----------------------+
-          |  MODE 1: EDGE CORES   |                             | MODE 2: INTERNAL CORES|
-          |  (Even Rx/Tx Queues)  |                             | (Odd Rx/Tx Queues)    |
-          |                       |                             |                       |
-          |  [ Local TCP Hash ]   |                             | [ UDP Parse ]         |
-          |  [ NUMA TCB Mempool]  |                             | [ Hypervisor Dispatch]|
-          |  [ Zero-Copy Router]  |                             +----------|------------+
-          +-----------------------+                                        | (CAS)
-                                                                +----------v------------+
-                                                                | GLOBAL QOS TIER       |
-                                                                | [ Cuckoo Hash Map ]   |
-                                                                | [ Token Buckets ]     |
-                                                                +----------^------------+
-                                                                           | (Async)
-                                                                +-----------------------+
-                                                                | MASTER CORE 0         |
-                                                                | [ Signal Handling ]   |
-                                                                | [ Garbage Collector ] |
-                                                                +-----------------------+
+                                                       [ External Network ]
+                                                                 |
+                            +-------------------------------------------------------------------------+
+                            |                          Physical NIC Silicon                           |
+                            |  +-------------------------------------------------------------------+  |
+                            |  |                Hardware Flow Steering (rte_flow)                  |  |
+                            |  +-------------------------------------------------------------------+  |
+                            +---------|-----------------------------------------------------|---------+
+                                      | (TCP Dst Port 80)                                   | (UDP)
+                                      v                                                     v
+                            +-----------------------+                             +-----------------------+
+                            |  MODE 1: EDGE CORES   |                             | MODE 2: INTERNAL CORES|
+                            |  (Even Rx/Tx Queues)  |                             | (Odd Rx/Tx Queues)    |
+                            |                       |                             |                       |
+                            |  [ Local TCP Hash ]   |                             | [ UDP Parse ]         |
+                            |  [ NUMA TCB Mempool]  |                             | [ Hypervisor Dispatch]|
+                            |  [ Zero-Copy Router]  |                             +----------|------------+
+                            +-----------------------+                                        | (CAS)
+                                                                                  +----------v------------+
+                                                                                  | GLOBAL QOS TIER       |
+                                                                                  | [ Cuckoo Hash Map ]   |
+                                                                                  | [ Token Buckets ]     |
+                                                                                  +----------^------------+
+                                                                                             | (Async)
+                                                                                  +-----------------------+
+                                                                                  | MASTER CORE 0         |
+                                                                                  | [ Signal Handling ]   |
+                                                                                  | [ Garbage Collector ] |
+                                                                                  +-----------------------+
 ```
