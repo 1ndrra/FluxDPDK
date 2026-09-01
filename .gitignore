@@ -1,0 +1,24 @@
+# Prerequisites
+*.d
+*.o
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Compiled Dynamic libraries
+*.so
+*.so.*
+*.dylib
+*.dll
+
+# Executables
+dpdk_microstack
+*.exe
+*.out
+*.app
+
+# Build directories
+build/
